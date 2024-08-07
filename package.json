@@ -1,9 +1,9 @@
 {
-  "name": "electron-react-vite",
-  "productName": "electron-react-vite",
+  "name": "e-ims",
+  "productName": "E-IMS",
   "description": "An amazing app",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "main": "electron.cjs",
   "scripts": {
@@ -16,22 +16,22 @@
     "electron-build": "cross-env NODE_ENV=production electron-builder"
   },
   "build": {
-    "appId": "electron-react-vite",
+    "appId": "E-IMS",
     "mac": {
-      "icon": "your-icon"
+      "icon": "ims-logo.ico"
     },
     "win": {
       "target": [
         "nsis"
       ],
-      "icon": "your-icon"
+      "icon": "ims-logo.ico"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "your-icon",
-      "uninstallerIcon": "your-icon",
-      "uninstallDisplayName": "electron-react-vite"
+      "installerIcon": "ims-logo.ico",
+      "uninstallerIcon": "ims-logo.ico",
+      "uninstallDisplayName": "E-IMS"
     },
     "directories": {
       "output": "out"
@@ -43,8 +43,16 @@
     ]
   },
   "dependencies": {
+    "antd": "^5.19.3",
+    "d3-ease": "^3.0.1",
+    "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.30.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-circular-progressbar": "^2.1.0",
+    "react-move": "^6.5.0",
+    "react-to-print": "^2.15.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
@@ -59,6 +67,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
+    "react-router-dom": "^6.25.1",
     "vite": "^4.3.2",
     "wait-on": "^7.0.1"
   }
