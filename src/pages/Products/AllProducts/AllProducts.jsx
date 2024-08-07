@@ -11,7 +11,7 @@ import {
 } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { debounce } from "lodash";
-import { EditOutlined, SearchOutlined } from "@ant-design/icons";
+import { EditOutlined, SearchOutlined, EyeOutlined } from "@ant-design/icons";
 import "./AllProducts.css"; // Import the CSS file
 import DeleteProduct from "../../../components/modals/DeleteProduct";
 
@@ -62,6 +62,10 @@ function AllProducts() {
 
     fetchProducts(payload);
   }, [pageNumber, pageSize, searchText]);
+
+  const handleView = (productID) => {
+    navigate("/view-product/" + productID);
+  };
 
   const handleEdit = (productID) => {
     navigate("/edit-product", { state: { productID } });
@@ -118,6 +122,11 @@ function AllProducts() {
       key: "actions",
       render: (text, record) => (
         <Space size="middle">
+          <Button
+            type="primary"
+            icon={<EyeOutlined />}
+            onClick={() => handleView(record.productID)}
+          ></Button>
           <Button
             type="primary"
             icon={<EditOutlined />}

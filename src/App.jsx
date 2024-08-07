@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  HashRouter,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./App.css";
 import Login from "./pages/Login";
@@ -11,6 +6,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import ValidateRoute from "./components/utility/ValidateRoute";
 import AllProducts from "./pages/Products/AllProducts/AllProducts";
+import ViewProduct from "./pages/Products/ViewProduct/ViewProduct";
 import CreateProduct from "./pages/Products/CreateProduct/CreateProduct";
 import EditProduct from "./pages/Products/EditProduct/EditProduct";
 import AllUsers from "./pages/Users/AllUsers/AllUsers";
@@ -97,7 +93,7 @@ function App({ isDarkMode, toggleTheme }) {
     }
   }, [localStorage.getItem("token")]);
   return (
-    <HashRouter>
+    <Router>
       <Routes>
         <Route
           path="/login"
@@ -131,6 +127,14 @@ function App({ isDarkMode, toggleTheme }) {
             element={
               <ValidateRoute requiredPermissions={"Products"}>
                 <AllProducts />
+              </ValidateRoute>
+            }
+          />
+          <Route
+            path="/view-product/:productID"
+            element={
+              <ValidateRoute requiredPermissions={"Products"}>
+                <ViewProduct />
               </ValidateRoute>
             }
           />
@@ -324,7 +328,7 @@ function App({ isDarkMode, toggleTheme }) {
           />
         </Routes>
       </Sidebar>
-    </HashRouter>
+    </Router>
   );
 }
 
