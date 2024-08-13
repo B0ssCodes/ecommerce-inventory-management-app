@@ -1,34 +1,38 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
+  Pagination,
   Typography,
   Table,
   Button,
-  Input,
-  Pagination,
-  Select,
-  Spin,
   Space,
+  Input,
+  Spin,
+  Select,
 } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { debounce } from "lodash";
-import { EditOutlined, SearchOutlined, EyeOutlined } from "@ant-design/icons";
-import "./AllUsers.css"; // Import the CSS file
-import DeleteUser from "../../../components/modals/DeleteUser";
+import { EditOutlined, EyeOutlined } from "@ant-design/icons";
+import "./AllUserLogs.css"; // Import the CSS file
 
 const { Title } = Typography;
 const { Option } = Select;
 
-function AllUsers() {
+function AllUserLogs() {
   const [searchText, setSearchText] = useState("");
-  const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [users, setUsers] = useState([]);
   const [itemCount, setItemCount] = useState(1);
+  const [UserLogs, setUserLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
-  const fetchUsers = async (payload) => {
-    const url = "https://localhost:7200/api/user/get";
+  const fetchUserLogs = async (pageNumber, pageSize, searchText) => {
+    const payload = {
+      pageNumber,
+      pageSize,
+      search: searchText,
+    };
+    const url = `https://localhost:7200/api/userLog/get`;
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(url, {
@@ -42,32 +46,21 @@ function AllUsers() {
 
       const data = await response.json();
       if (response.ok) {
-        setUsers(data.result);
+        setUserLogs(data.result);
         setItemCount(data.itemCount);
       } else {
-        console.error("Failed to fetch users:", data);
-        alert(data.message || "Failed to fetch users");
+        console.error("Failed to fetch user logs:", data);
+        alert(data.message || "Failed to fetch user logs");
       }
     } catch (error) {
       console.error("An error occurred:", error);
-      alert("An error occurred while fetching users");
+      alert("An error occurred while fetching user logs");
     }
   };
 
   useEffect(() => {
-    const payload = {
-      pageNumber: pageNumber,
-      pagesize: pageSize,
-      search: searchText,
-    };
-
-    fetchUsers(payload);
-  }, [pageNumber, pageSize, searchText]);
-
-  const handleTableChange = (page, pageSize) => {
-    setPageNumber(page);
-    setPageSize(pageSize);
-  };
+    fetchUserLogs(currentPage, pageSize, searchText);
+  }, [currentPage, pageSize, searchText]);
 
   const debouncedSearch = useCallback(
     debounce((value) => {
@@ -77,59 +70,48 @@ function AllUsers() {
     []
   );
 
-  const handleView = (userID) => {
-    navigate(`/view-user/${userID}`);
-  };
-
-  const handleEdit = (userID) => {
-    navigate("/edit-user", { state: { userID } });
-  };
-
   const handleSearchChange = (e) => {
     setIsLoading(true);
     debouncedSearch(e.target.value);
   };
+
+  const handleView = (userLogID) => {
+    navigate("/view-user-log", { state: { logID: userLogID } });
+  };
+
   const columns = [
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
+      title: "Name",
+      dataIndex: "logName",
+      key: "logName",
     },
     {
-      title: "First",
-      dataIndex: "firstName",
-      key: "firstName",
+      title: "Model",
+      dataIndex: "model",
+      key: "model",
     },
     {
-      title: "Last",
-      dataIndex: "lastName",
-      key: "lastName",
-    },
-    {
-      title: "Role",
-      dataIndex: "role",
-      key: "role",
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
     },
     {
       title: "Actions",
       key: "actions",
       render: (text, record) => (
-        <Space size="middle">
-          <Button
-            type="primary"
-            icon={<EyeOutlined />}
-            onClick={() => handleView(record.userID)}
-          ></Button>
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record.userID)}
-          ></Button>
-          <DeleteUser userID={record.userID} />
-        </Space>
+        <Button
+          type="primary"
+          icon={<EyeOutlined />}
+          onClick={() => handleView(record.logID)}
+        ></Button>
       ),
     },
   ];
+
+  const handleTableChange = (page, pageSize) => {
+    setCurrentPage(page);
+    setPageSize(pageSize);
+  };
 
   return (
     <>
@@ -141,7 +123,7 @@ function AllUsers() {
         }}
       >
         <Title level={2} style={{ marginBottom: "0.3em", lineHeight: "32px" }}>
-          Users
+          User Logs
         </Title>
         <div
           style={{
@@ -154,31 +136,22 @@ function AllUsers() {
             <Input
               type="text"
               onChange={handleSearchChange}
-              placeholder="Search Users..."
+              placeholder="Search user logs..."
               style={{ marginRight: "8px", maxWidth: "80%" }}
             />
             {isLoading ? <Spin size="small" /> : null}
           </div>
-          <Select
-            defaultValue={10}
-            style={{ width: 120 }}
-            onChange={(value) => handleTableChange(1, value)}
-          >
-            <Option value={5}>5</Option>
-            <Option value={10}>10</Option>
-            <Option value={25}>25</Option>
-          </Select>
         </div>
       </div>
 
       <div style={{ maxHeight: "70vh", overflowY: "auto" }}>
         <Table
           columns={columns}
-          dataSource={users}
-          rowKey="userID"
+          dataSource={UserLogs}
+          rowKey="logID"
           bordered
           className="custom-table"
-          pagination={false}
+          pagination={false} // Disable built-in pagination
           onChange={handleTableChange}
         />
       </div>
@@ -186,18 +159,13 @@ function AllUsers() {
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
           alignItems: "center",
           marginTop: 16,
         }}
       >
-        <Button type="primary">
-          <Link to="/create-user" style={{ color: "white" }}>
-            Create User
-          </Link>
-        </Button>
         <Pagination
-          current={pageNumber}
+          current={currentPage}
           pageSize={pageSize}
           total={itemCount}
           onChange={handleTableChange}
@@ -207,4 +175,4 @@ function AllUsers() {
   );
 }
 
-export default AllUsers;
+export default AllUserLogs;

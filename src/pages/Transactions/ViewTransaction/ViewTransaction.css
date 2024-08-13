@@ -1,0 +1,40 @@
+/* print.css */
+@media print {
+  @page {
+    size: A4; /* You can set this to other sizes like 'letter', 'A3', etc. */
+    margin: 1cm; /* Adjust the margin as needed */
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .ant-layout,
+  .ant-layout-header,
+  .ant-layout-content,
+  .ant-layout-footer,
+  .ant-card,
+  .ant-card-body,
+  .ant-row,
+  .ant-col,
+  .ant-typography,
+  .ant-btn,
+  .ant-table,
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    background: white !important;
+    color: black !important;
+  }
+
+  .ant-btn {
+    display: none !important; /* Hide buttons during print */
+  }
+
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    border-color: black !important;
+  }
+
+  /* Add more styles as needed to ensure the print version looks good */
+}

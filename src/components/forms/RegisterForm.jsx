@@ -50,10 +50,12 @@ function RegisterForm({ returnRoute, buttonText, showLogin }) {
     };
 
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch("https://localhost:7200/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formattedValues),
       });

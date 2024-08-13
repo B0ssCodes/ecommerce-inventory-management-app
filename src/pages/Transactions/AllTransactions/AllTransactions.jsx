@@ -140,7 +140,10 @@ function AllTransactions() {
               type="primary"
               onClick={() =>
                 navigate("/submit-transaction", {
-                  state: { transactionID: record.transactionID },
+                  state: {
+                    transactionID: record.transactionID,
+                    transactionTypeID: record.typeID,
+                  },
                 })
               }
             >

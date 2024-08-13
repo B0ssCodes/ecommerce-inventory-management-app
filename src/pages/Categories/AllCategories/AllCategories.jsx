@@ -11,7 +11,7 @@ import {
 } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { debounce } from "lodash";
-import { EditOutlined, SearchOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined } from "@ant-design/icons";
 import "./AllCategories.css"; // Import the CSS file
 import DeleteCategory from "../../../components/modals/DeleteCategory";
 
@@ -20,15 +20,20 @@ const { Option } = Select;
 
 function AllCategories() {
   const [searchText, setSearchText] = useState("");
-  const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [itemCount, setItemCount] = useState(1);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
-  const fetchCategories = async (payload) => {
-    const url = "https://localhost:7200/api/category/get";
+  const fetchCategories = async (pageNumber, pageSize, searchText) => {
+    const payload = {
+      pageNumber,
+      pageSize,
+      search: searchText,
+    };
+    const url = `https://localhost:7200/api/category/get`;
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(url, {
@@ -55,14 +60,8 @@ function AllCategories() {
   };
 
   useEffect(() => {
-    const payload = {
-      pageNumber: pageNumber,
-      pagesize: pageSize,
-      search: searchText,
-    };
-
-    fetchCategories(payload);
-  }, [pageNumber, pageSize, searchText]);
+    fetchCategories(currentPage, pageSize, searchText);
+  }, [currentPage, pageSize, searchText]);
 
   const handleEdit = (categoryID) => {
     navigate("/edit-category", { state: { categoryID } });
@@ -79,6 +78,10 @@ function AllCategories() {
   const handleSearchChange = (e) => {
     setIsLoading(true);
     debouncedSearch(e.target.value);
+  };
+
+  const handleView = (categoryID) => {
+    navigate(`/view-category/${categoryID}`);
   };
 
   const columns = [
@@ -99,6 +102,11 @@ function AllCategories() {
         <Space size="middle">
           <Button
             type="primary"
+            icon={<EyeOutlined />}
+            onClick={() => handleView(record.categoryID)}
+          ></Button>
+          <Button
+            type="primary"
             icon={<EditOutlined />}
             onClick={() => handleEdit(record.categoryID)}
           ></Button>
@@ -109,7 +117,7 @@ function AllCategories() {
   ];
 
   const handleTableChange = (page, pageSize) => {
-    setPageNumber(page);
+    setCurrentPage(page);
     setPageSize(pageSize);
   };
 
@@ -179,7 +187,7 @@ function AllCategories() {
           </Link>
         </Button>
         <Pagination
-          current={pageNumber}
+          current={currentPage}
           pageSize={pageSize}
           total={itemCount}
           onChange={handleTableChange}

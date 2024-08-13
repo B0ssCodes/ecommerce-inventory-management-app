@@ -4,7 +4,7 @@ import { Card, Row, Col, Tag, Typography, Button } from "antd";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import moment from "moment";
-const AllProductAnalytics = () => {
+const ProductAnalytics = () => {
   const [productAnalytics, setProductAnalytics] = useState([]);
   const navigate = useNavigate();
   const { Text, Title } = Typography;
@@ -12,7 +12,7 @@ const AllProductAnalytics = () => {
   useEffect(() => {
     const statisticsRefreshRate = localStorage.getItem("statisticsRefreshRate");
     const fetchProductAnalytics = async () => {
-      const url = `https://localhost:7200/api/analytics/get/${statisticsRefreshRate}`;
+      const url = `https://localhost:7200/api/analytics/getProduct/${statisticsRefreshRate}`;
       const token = localStorage.getItem("token");
       try {
         const response = await fetch(url, {
@@ -37,7 +37,7 @@ const AllProductAnalytics = () => {
   }, []);
 
   const handleRefreshStatistics = async () => {
-    const url = "https://localhost:7200/api/analytics/reset";
+    const url = "https://localhost:7200/api/analytics/resetProduct";
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(url, {
@@ -83,7 +83,7 @@ const AllProductAnalytics = () => {
     totalProfit > 0 ? "green" : totalProfit < 0 ? "red" : "gray";
 
   const handleCardClick = (productID) => {
-    navigate("/edit-product", { state: { productID } });
+    navigate("/view-product/" + productID);
   };
 
   return (
@@ -229,4 +229,4 @@ const AllProductAnalytics = () => {
   );
 };
 
-export default AllProductAnalytics;
+export default ProductAnalytics;

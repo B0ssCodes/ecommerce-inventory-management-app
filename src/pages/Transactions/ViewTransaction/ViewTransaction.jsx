@@ -3,17 +3,15 @@ import { useLocation } from "react-router-dom";
 import { Layout, Typography, Table, Row, Col, Card, Button } from "antd";
 import { PrinterOutlined } from "@ant-design/icons";
 import ReactToPrint from "react-to-print";
-import useDarkMode from "../../../components/layout/useDarkMode";
+import "./ViewTransaction.css";
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
 
-function ViewTransaction({ isDarkMode, toggleTheme }) {
+function ViewTransaction() {
   const location = useLocation();
   const [transactionID, setTransactionID] = useState(null);
   const [transactionDetails, setTransactionDetails] = useState(null);
   const componentRef = useRef();
-  const [originalTheme, setOriginalTheme] = useState(isDarkMode);
-
   useEffect(() => {
     setTransactionID(location.state.transactionID);
   }, [location.state.transactionID]);
@@ -77,19 +75,6 @@ function ViewTransaction({ isDarkMode, toggleTheme }) {
     },
   ];
 
-  const handleBeforePrint = () => {
-    if (isDarkMode) {
-      setOriginalTheme(true);
-      toggleTheme();
-    }
-  };
-
-  const handleAfterPrint = () => {
-    if (originalTheme) {
-      toggleTheme();
-    }
-  };
-
   return (
     <Layout style={{ minHeight: "100vh", padding: "24px" }}>
       <Header style={{ background: "transparent", padding: 0 }}>
@@ -106,8 +91,6 @@ function ViewTransaction({ isDarkMode, toggleTheme }) {
                 </Button>
               )}
               content={() => componentRef.current}
-              onBeforeGetContent={handleBeforePrint}
-              onAfterPrint={handleAfterPrint}
             />
           </Col>
         </Row>

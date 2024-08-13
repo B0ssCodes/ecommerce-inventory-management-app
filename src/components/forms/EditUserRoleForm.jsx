@@ -8,12 +8,13 @@ import {
   ShopOutlined,
   TagsOutlined,
   UserOutlined,
-  TeamOutlined,
   HomeOutlined,
   UsergroupAddOutlined,
   SolutionOutlined,
   SettingOutlined,
-  LineChartOutlined,
+  PieChartOutlined,
+  DotChartOutlined,
+  AreaChartOutlined,
 } from "@ant-design/icons";
 
 const EditUserRoleForm = () => {
@@ -98,7 +99,10 @@ const EditUserRoleForm = () => {
     { name: "User Roles", icon: <UsergroupAddOutlined /> },
     { name: "Vendors", icon: <SolutionOutlined /> },
     { name: "Configuration", icon: <SettingOutlined /> },
-    { name: "Product Analytics", icon: <LineChartOutlined /> },
+    { name: "Product Analytics", icon: <PieChartOutlined /> },
+    { name: "Category Analytics", icon: <DotChartOutlined /> },
+    { name: "Vendor Analytics", icon: <AreaChartOutlined /> },
+    { name: "User Logs", icon: <AreaChartOutlined /> },
   ];
 
   return (

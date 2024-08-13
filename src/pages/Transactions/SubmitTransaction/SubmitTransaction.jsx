@@ -116,7 +116,6 @@ function SubmitTransaction() {
             <DownOutlined />
           </Button>
         </Dropdown>
-
         <Button onClick={handleTransactionSubmit}>Submit Transaction</Button>
       </Header>
       <Content style={{ padding: "24px" }}>

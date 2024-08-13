@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  HashRouter,
+} from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./App.css";
 import Login from "./pages/Login";
@@ -30,9 +35,15 @@ import EditUserRole from "./pages/UserRoles/EditUserRole/EditUserRole";
 import AllInventories from "./pages/Inventory/AllInventories/AllInventories";
 import LowInventories from "./pages/Inventory/LowInventories/LowInventories";
 import OutInventories from "./pages/Inventory/OutInventories/OutInventories";
-import AllProductAnalytics from "./pages/ProductAnalytics/AllProductAnalytics/AllProductAnalytics";
+import ProductAnalytics from "./pages/Analytics/ProductAnalytics/ProductAnalytics";
 import { decodeToken } from "./components/utility/decodeToken";
 import Configuration from "./pages/Configuration/Configuration";
+import CategoryAnalytics from "./pages/Analytics/CategoryAnalytics/CategoryAnalytics";
+import VendorAnalytics from "./pages/Analytics/VendorAnalytics/VendorAnalytics";
+import ViewCategory from "./pages/Categories/ViewCategory/ViewCategory";
+import AllUserLogs from "./pages/Activity/UserLogs/AllUserLogs/AllUserLogs";
+import ViewUserLog from "./pages/Activity/UserLogs/ViewUserLog/ViewUserLog";
+import ViewUser from "./pages/Users/ViewUser/ViewUser";
 function App({ isDarkMode, toggleTheme }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userPermissions, setUserPermissions] = useState([]);
@@ -72,6 +83,16 @@ function App({ isDarkMode, toggleTheme }) {
       localStorage.setItem("statisticsRefreshRate", 7);
     }
 
+    const categoryFetchCount = localStorage.getItem("categoryFetchCount");
+    if (!categoryFetchCount) {
+      localStorage.setItem("categoryFetchCount", 10);
+    }
+
+    const vendorFetchCount = localStorage.getItem("vendorFetchCount");
+    if (!vendorFetchCount) {
+      localStorage.setItem("vendorFetchCount", 5);
+    }
+
     const token = localStorage.getItem("token");
     const tokenExpiry = localStorage.getItem("tokenExpiry");
     const claims = decodeToken(token);
@@ -80,7 +101,9 @@ function App({ isDarkMode, toggleTheme }) {
       userRoleID =
         claims["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
-      getUserPermissions(userRoleID);
+      if (!localStorage.getItem("userPermissions")) {
+        getUserPermissions(userRoleID);
+      }
     }
     if (token && tokenExpiry) {
       const currentTime = new Date().getTime();
@@ -93,7 +116,7 @@ function App({ isDarkMode, toggleTheme }) {
     }
   }, [localStorage.getItem("token")]);
   return (
-    <Router>
+    <HashRouter>
       <Routes>
         <Route
           path="/login"
@@ -172,6 +195,14 @@ function App({ isDarkMode, toggleTheme }) {
             }
           />
           <Route
+            path="/view-user/:userID"
+            element={
+              <ValidateRoute requiredPermissions={"Users"}>
+                <ViewUser />
+              </ValidateRoute>
+            }
+          />
+          <Route
             path="/edit-user"
             element={
               <ValidateRoute requiredPermissions={"Users"}>
@@ -236,6 +267,14 @@ function App({ isDarkMode, toggleTheme }) {
             }
           />
           <Route
+            path="/view-category/:categoryID"
+            element={
+              <ValidateRoute requiredPermissions={"Categories"}>
+                <ViewCategory />
+              </ValidateRoute>
+            }
+          />
+          <Route
             path="/create-category"
             element={
               <ValidateRoute requiredPermissions={"Categories"}>
@@ -287,10 +326,7 @@ function App({ isDarkMode, toggleTheme }) {
             path="/view-transaction"
             element={
               <ValidateRoute requiredPermissions={"Transactions"}>
-                <ViewTransaction
-                  isDarkMode={isDarkMode}
-                  toggleTheme={toggleTheme}
-                />
+                <ViewTransaction />
               </ValidateRoute>
             }
           />
@@ -313,7 +349,7 @@ function App({ isDarkMode, toggleTheme }) {
           <Route
             path="/out-inventories"
             element={
-              <ValidateRoute requiredPermissions={"any"}>
+              <ValidateRoute requiredPermissions={"Inventory"}>
                 <OutInventories />
               </ValidateRoute>
             }
@@ -321,14 +357,46 @@ function App({ isDarkMode, toggleTheme }) {
           <Route
             path="/product-analytics"
             element={
-              <ValidateRoute requiredPermissions={"Products"}>
-                <AllProductAnalytics />
+              <ValidateRoute requiredPermissions={"Product Analytics"}>
+                <ProductAnalytics />
+              </ValidateRoute>
+            }
+          />
+          <Route
+            path="/category-analytics"
+            element={
+              <ValidateRoute requiredPermissions={"Category Analytics"}>
+                <CategoryAnalytics />
+              </ValidateRoute>
+            }
+          />
+          <Route
+            path="/vendor-analytics"
+            element={
+              <ValidateRoute requiredPermissions={"Vendor Analytics"}>
+                <VendorAnalytics />
+              </ValidateRoute>
+            }
+          />
+          <Route
+            path="/user-logs"
+            element={
+              <ValidateRoute requiredPermissions={"User Logs"}>
+                <AllUserLogs />
+              </ValidateRoute>
+            }
+          />
+          <Route
+            path="/view-user-log"
+            element={
+              <ValidateRoute requiredPermissions={"User Logs"}>
+                <ViewUserLog />
               </ValidateRoute>
             }
           />
         </Routes>
       </Sidebar>
-    </Router>
+    </HashRouter>
   );
 }
 

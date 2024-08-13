@@ -31,7 +31,7 @@ function SelectProducts({
 
   useEffect(() => {
     const fetchData = async (payload) => {
-      const url = "https://localhost:7200/api/product/getSelect";
+      const url = `https://localhost:7200/api/product/getSelect/${transactionTypeID}`;
       const token = localStorage.getItem("token");
       const response = await fetch(url, {
         method: "POST",
@@ -50,13 +50,16 @@ function SelectProducts({
         alert("Failed to fetch Products:", data.message);
       }
     };
-    const payload = {
-      pageNumber: pageNumber,
-      pageSize: pageSize,
-      search: searchText,
-    };
-    fetchData(payload);
-  }, [pageNumber, pageSize, searchText]);
+
+    if (transactionTypeID) {
+      const payload = {
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+        search: searchText,
+      };
+      fetchData(payload);
+    }
+  }, [pageNumber, pageSize, searchText, transactionTypeID]);
 
   const showModal = (product) => {
     setSelectedProduct(product);
